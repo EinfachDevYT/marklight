@@ -1,0 +1,12 @@
+# Marklight – fallback for shared hosting where the document root cannot be set to public/.
+# Everything is routed into public/; src/, config/, tests/ etc. are never reachable.
+Options -Indexes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(src|config|tests|docker|scripts|node_modules|\.git)(/|$) - [F,L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

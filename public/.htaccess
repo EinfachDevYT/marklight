@@ -1,0 +1,39 @@
+# Marklight – Apache hardening for the public/ document root. Engineered by EinfachDev.
+Options -Indexes -MultiViews
+ServerSignature Off
+DirectoryIndex index.php
+
+# Never serve hidden files, backups or source maps
+<FilesMatch "(^\.|~$|\.(bak|swp|orig|map|log|ini|sh|sql)$)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always unset X-Powered-By
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "no-referrer"
+    Header always set X-Frame-Options "DENY"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    # Static files get a CSP too (PHP pages send their own)
+    <FilesMatch "\.(js|css|svg|md|json|webmanifest|woff2|txt)$">
+        Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'"
+    </FilesMatch>
+    <FilesMatch "\.(js|css|woff2|svg)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+    <FilesMatch "^sw\.js$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType text/markdown .md
+    AddType font/woff2 .woff2
+    AddDefaultCharset utf-8
+    AddCharset utf-8 .js .css .md .svg .json .webmanifest
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/markdown application/javascript image/svg+xml application/manifest+json
+</IfModule>

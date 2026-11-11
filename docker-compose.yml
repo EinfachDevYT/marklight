@@ -1,0 +1,20 @@
+# Marklight – engineered by EinfachDev
+services:
+  marklight:
+    build: .
+    image: marklight:latest
+    container_name: marklight
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m,mode=1777
+      - /var/run/apache2:size=1m,uid=33,gid=33
+      - /var/lock/apache2:size=1m,uid=33,gid=33
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    # Optional: your own settings
+    # volumes:
+    #   - ./config/config.local.php:/var/www/marklight/config/config.local.php:ro

@@ -1,0 +1,7 @@
+.git
+node_modules
+tests
+scripts
+*.md
+!public/assets/*.md
+config/config.local.php
