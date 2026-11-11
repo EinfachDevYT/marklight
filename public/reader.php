@@ -39,7 +39,7 @@ page_start([
           <p class="empty-hint" id="filesEmpty" data-i18n="reader.noFiles">Open a folder or several files to browse them here.</p>
         </div>
         <div class="doc-meta" id="docMeta" hidden></div>
-        <div class="credit"><?= engineered_by() ?></div>
+        <div class="credit"><?= engineered_by() ?><?= legal_links() ?></div>
       </aside>
 
       <main class="reader-main" id="main">
@@ -128,5 +128,4 @@ page_start([
   <input type="file" id="fileInput" accept=".md,.markdown,.mdown,.mkd,.mkdn,.mdx,.txt,text/markdown,text/plain" multiple hidden>
   <input type="file" id="folderInput" webkitdirectory directory multiple hidden>
 
-</body>
-</html>
+<?php app_end();

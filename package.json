@@ -7,7 +7,7 @@
   "author": "EinfachDev",
   "scripts": {
     "vendor": "node scripts/vendor.mjs",
-    "start": "php -S localhost:8080 -t public",
+    "start": "php -S localhost:8080 -t public scripts/dev-router.php",
     "test": "php tests/run.php"
   },
   "devDependencies": {

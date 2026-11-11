@@ -44,7 +44,7 @@
 | Diff | Line or word diff, ignore whitespace |
 | Lint & format | Broken anchors, missing alt texts, heading jumps, bare URLs … plus one-click formatter |
 
-UI languages: **English** and **German** (auto-detected, switchable).
+UI languages: **English** and **German** – chosen by the visitor's country (or browser language), switchable at any time.
 
 ## 🚀 Self-hosting
 
@@ -65,41 +65,67 @@ The container runs as `www-data`, with a read-only file system, all capabilities
 
 1. Upload the repository.
 2. Point the **document root to `public/`**. Only that folder must be reachable from the web.
-3. Can't change the document root? The root `.htaccess` routes everything into `public/` and blocks `src/`, `config/` & co. (Apache with `mod_rewrite`).
+3. Clean URLs (`/reader`, `/editor`, …) need a rewrite rule. Apache: already included in `public/.htaccess`. nginx: see below.
+4. Can't change the document root? The root `.htaccess` routes everything into `public/` and blocks `src/`, `config/` & co. (Apache with `mod_rewrite`).
 
-nginx example:
+### nginx + PHP-FPM
 
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name md.example.org;
-    root /var/www/marklight/public;
-    index index.php;
-    access_log off;                      # Marklight does not need logs
-    location ~ /\. { deny all; }
-    location / { try_files $uri $uri/ =404; }
-    location ~ \.php$ {
-        try_files $uri =404;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-    }
-}
+Ready-to-use files live in [`docs/`](docs):
+
+| File | Goes to |
+| --- | --- |
+| [`docs/nginx/marklight.conf`](docs/nginx/marklight.conf) | `/etc/nginx/sites-available/<your-domain>` – vhost with clean URLs, headers, no access log |
+| [`docs/php-fpm-pool.conf`](docs/php-fpm-pool.conf) | `/etc/php/<version>/fpm/pool.d/marklight.conf` – dedicated, locked-down PHP pool |
+| [`docs/nginx/geoip2.conf`](docs/nginx/geoip2.conf) | `/etc/nginx/conf.d/geoip2.conf` – optional country detection (default language) |
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
 ```
+```bash
+sudo certbot --nginx -d marklight.example.org
+```
+
+### Country detection (optional)
+
+Used to pick the default language (German for DE/AT/CH/LI/LU, English otherwise). No external service is called – the lookup runs locally.
+
+```bash
+sudo apt install libnginx-mod-http-geoip2
+```
+```bash
+sudo sh scripts/update-geoip.sh
+```
+
+Then copy `docs/nginx/geoip2.conf`, keep the `GEOIP_COUNTRY_CODE` line in the vhost and set `'geo' => ['source' => 'server_var']`. Run `scripts/update-geoip.sh` monthly (cron). Without GeoIP, the language falls back to the browser's `Accept-Language`.
 
 ### Try locally
 
 ```bash
-php -S localhost:8080 -t public
+php -S localhost:8080 -t public scripts/dev-router.php
 ```
 
 ### Configuration
 
-Defaults live in `config/config.php`. Override them in `config/config.local.php` (git-ignored):
+Defaults live in `config/config.php`. Override them in `config/config.local.php` (git-ignored – never commit personal data):
 
 ```php
 <?php
 return [
+    'base_url' => 'https://marklight.example.org',
+
+    // Legal pages /impressum and /datenschutz (required for sites run from Germany)
+    'legal' => [
+        'name'    => 'Your Name',
+        'street'  => 'Street 1',
+        'city'    => '12345 City',
+        'email'   => 'mail@example.org',
+        // or link an existing Impressum instead of name/address:
+        // 'imprint_url' => 'https://example.org/impressum',
+    ],
+
+    // Country detection for the default language: 'none' | 'server_var' (nginx GeoIP2) | 'cloudflare'
+    'geo' => ['source' => 'server_var'],
+
     'fetch' => [
         'enabled'       => true,               // false = disable "Open from URL" completely
         'allowed_hosts' => ['raw.githubusercontent.com', 'docs.example.org'],
@@ -140,14 +166,17 @@ Found a vulnerability? Please see [SECURITY.md](SECURITY.md).
 
 ```
 public/            ← document root (the only web-reachable folder)
-  index.php        landing page
-  reader.php       reader
-  editor.php       editor
-  tools.php        tools
+  index.php        landing page            → /
+  reader.php       reader                  → /reader
+  editor.php       editor                  → /editor
+  tools.php        tools                   → /tools
+  impressum.php    legal notice            → /impressum
+  datenschutz.php  privacy policy          → /datenschutz
   api/fetch.php    SSRF-hardened URL loader
   assets/          CSS, JS, icons, demo documents
   vendor/          bundled third-party libraries
-src/               PHP: bootstrap & security headers, layout, UrlFetcher, RateLimiter
+src/               PHP: bootstrap (headers, language, geo), layout, UrlFetcher, RateLimiter
+docs/              nginx vhost, GeoIP2 and PHP-FPM pool examples
 config/            configuration (config.local.php overrides)
 docker/            Apache vhost & hardened php.ini
 tests/             security tests

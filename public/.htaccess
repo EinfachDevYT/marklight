@@ -3,6 +3,15 @@ Options -Indexes -MultiViews
 ServerSignature Off
 DirectoryIndex index.php
 
+# Clean URLs: /reader → reader.php (the .php URLs redirect to the clean ones in PHP)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([a-z]+)$ $1.php [L]
+</IfModule>
+
 # Never serve hidden files, backups or source maps
 <FilesMatch "(^\.|~$|\.(bak|swp|orig|map|log|ini|sh|sql)$)">
     Require all denied

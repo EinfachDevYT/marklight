@@ -78,6 +78,15 @@ check(UrlFetcher::resolveRelative('https://a.org/x/y.md', 'z.md') === 'https://a
 check(UrlFetcher::resolveRelative('https://a.org/x/y.md', '//b.org/q') === 'https://b.org/q', 'redirect protocol-relative');
 check(UrlFetcher::resolveRelative('https://a.org/', 'http://127.0.0.1/') === 'http://127.0.0.1/', 'redirect absolute kept (validated on next hop)');
 
+/* ---------- Language detection (no geo configured → Accept-Language) ---------- */
+$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de-DE,de;q=0.9,en;q=0.8';
+check(ui_lang() === 'de', 'German browser → de');
+$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9,de;q=0.5';
+check(ui_lang() === 'en', 'English browser → en');
+$_SERVER['HTTP_ACCEPT_LANGUAGE'] = '';
+check(ui_lang() === 'en', 'no header → en');
+check(country() === null, 'no geo source → no country (headers are not trusted)');
+
 /* ---------- Escaping ---------- */
 check(e('<script>"\'&') === '&lt;script&gt;&quot;&apos;&amp;', 'html escaping');
 

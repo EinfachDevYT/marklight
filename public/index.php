@@ -16,13 +16,13 @@ page_start([
     <section class="hero">
       <div class="container">
         <div>
-          <span class="eyebrow"><i data-icon="shield"></i><span data-i18n="hero.eyebrow">Open source · No tracking · Self-hostable</span></span>
+          <span class="eyebrow"><span class="dot"></span><span data-i18n="hero.eyebrow">Open source · No tracking · Self-hostable</span></span>
           <h1 data-i18n-html="hero.title">Markdown, <span class="hl">beautifully</span> read.</h1>
           <p class="lead" data-i18n="hero.lead">Marklight opens, edits and transforms Markdown files right in your browser. Nothing is uploaded – your documents never leave your device.</p>
           <div class="cta">
-            <a class="btn btn-primary btn-lg" href="reader.php"><i data-icon="book-open"></i><span data-i18n="hero.open">Open a file</span></a>
-            <a class="btn btn-lg" href="editor.php"><i data-icon="pen"></i><span data-i18n="hero.write">Start writing</span></a>
-            <a class="btn btn-lg btn-ghost" href="reader.php?demo"><span data-i18n="hero.demo">View demo</span><i data-icon="arrow-right"></i></a>
+            <a class="btn btn-primary btn-lg" href="reader"><i data-icon="book-open"></i><span data-i18n="hero.open">Open a file</span></a>
+            <a class="btn btn-lg" href="editor"><i data-icon="pen"></i><span data-i18n="hero.write">Start writing</span></a>
+            <a class="btn btn-lg btn-ghost" href="reader?demo"><span data-i18n="hero.demo">View demo</span><i data-icon="arrow-right"></i></a>
           </div>
           <div class="trust">
             <span><i data-icon="check"></i><span data-i18n="hero.t1">No sign-up</span></span>
@@ -88,12 +88,12 @@ $E = mc^2$</div>
           <p data-i18n="toolsec.lead">Small, focused helpers for everyday Markdown work.</p>
         </div>
         <div class="grid-3">
-          <a class="card" href="tools.php#table"><div class="ico"><i data-icon="table"></i></div><h3 data-i18n="tool.table.t">Table generator</h3><p data-i18n="tool.table.d">Build tables visually or paste from Excel / CSV.</p></a>
-          <a class="card" href="tools.php#toc"><div class="ico"><i data-icon="list-tree"></i></div><h3 data-i18n="tool.toc.t">TOC generator</h3><p data-i18n="tool.toc.d">GitHub-compatible table of contents with anchors.</p></a>
-          <a class="card" href="tools.php#html2md"><div class="ico"><i data-icon="arrow-left-right"></i></div><h3 data-i18n="tool.html2md.t">HTML → Markdown</h3><p data-i18n="tool.html2md.d">Convert HTML or rich text from websites into clean Markdown.</p></a>
-          <a class="card" href="tools.php#md2html"><div class="ico"><i data-icon="file-code"></i></div><h3 data-i18n="tool.md2html.t">Markdown → HTML</h3><p data-i18n="tool.md2html.d">Get sanitized HTML for blogs, CMS or e-mails.</p></a>
-          <a class="card" href="tools.php#diff"><div class="ico"><i data-icon="diff"></i></div><h3 data-i18n="tool.diff.t">Diff</h3><p data-i18n="tool.diff.d">Compare two versions line by line or word by word.</p></a>
-          <a class="card" href="tools.php#lint"><div class="ico"><i data-icon="wand"></i></div><h3 data-i18n="tool.lint.t">Lint &amp; format</h3><p data-i18n="tool.lint.d">Find broken anchors, missing alt texts and tidy up formatting.</p></a>
+          <a class="card" href="tools#table"><div class="ico"><i data-icon="table"></i></div><h3 data-i18n="tool.table.t">Table generator</h3><p data-i18n="tool.table.d">Build tables visually or paste from Excel / CSV.</p></a>
+          <a class="card" href="tools#toc"><div class="ico"><i data-icon="list-tree"></i></div><h3 data-i18n="tool.toc.t">TOC generator</h3><p data-i18n="tool.toc.d">GitHub-compatible table of contents with anchors.</p></a>
+          <a class="card" href="tools#html2md"><div class="ico"><i data-icon="arrow-left-right"></i></div><h3 data-i18n="tool.html2md.t">HTML → Markdown</h3><p data-i18n="tool.html2md.d">Convert HTML or rich text from websites into clean Markdown.</p></a>
+          <a class="card" href="tools#md2html"><div class="ico"><i data-icon="file-code"></i></div><h3 data-i18n="tool.md2html.t">Markdown → HTML</h3><p data-i18n="tool.md2html.d">Get sanitized HTML for blogs, CMS or e-mails.</p></a>
+          <a class="card" href="tools#diff"><div class="ico"><i data-icon="diff"></i></div><h3 data-i18n="tool.diff.t">Diff</h3><p data-i18n="tool.diff.d">Compare two versions line by line or word by word.</p></a>
+          <a class="card" href="tools#lint"><div class="ico"><i data-icon="wand"></i></div><h3 data-i18n="tool.lint.t">Lint &amp; format</h3><p data-i18n="tool.lint.d">Find broken anchors, missing alt texts and tidy up formatting.</p></a>
         </div>
       </div>
     </section>
@@ -135,9 +135,9 @@ php -S localhost:8080 -t public</pre>
         <h2 data-i18n="cta.title">Ready to read?</h2>
         <p data-i18n="cta.lead">Drop a Markdown file into the reader – or just start typing.</p>
         <div class="cta-row">
-          <a class="btn btn-primary btn-lg" href="reader.php"><i data-icon="book-open"></i><span data-i18n="nav.reader">Reader</span></a>
-          <a class="btn btn-lg" href="editor.php"><i data-icon="pen"></i><span data-i18n="nav.editor">Editor</span></a>
-          <a class="btn btn-lg" href="tools.php"><i data-icon="wrench"></i><span data-i18n="nav.tools">Tools</span></a>
+          <a class="btn btn-primary btn-lg" href="reader"><i data-icon="book-open"></i><span data-i18n="nav.reader">Reader</span></a>
+          <a class="btn btn-lg" href="editor"><i data-icon="pen"></i><span data-i18n="nav.editor">Editor</span></a>
+          <a class="btn btn-lg" href="tools"><i data-icon="wrench"></i><span data-i18n="nav.tools">Tools</span></a>
         </div>
       </div>
     </section>

@@ -32,7 +32,7 @@
     const te = e.target.closest('[data-to-editor]');
     if (te) {
       store.set('draft', { content: $(te.dataset.toEditor).value, name: 'converted.md', ts: Date.now() });
-      location.href = 'editor.php';
+      location.href = 'editor';
     }
   });
   // Allow dropping files into any tool textarea

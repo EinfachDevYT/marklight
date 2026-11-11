@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Marklight;
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 
 if (PHP_VERSION_ID < 80100) {
     http_response_code(500);
@@ -34,8 +34,19 @@ function config(): array
             if (is_array($override)) {
                 $cfg = array_replace_recursive($cfg, $override);
                 // Lists are replaced, not merged index-by-index.
-                if (isset($override['fetch']['allowed_hosts'])) {
-                    $cfg['fetch']['allowed_hosts'] = array_values((array) $override['fetch']['allowed_hosts']);
+                foreach ([['fetch', 'allowed_hosts'], ['german_countries']] as $path) {
+                    $src = $override;
+                    foreach ($path as $k) {
+                        $src = is_array($src) && array_key_exists($k, $src) ? $src[$k] : null;
+                    }
+                    if ($src !== null) {
+                        $ref = &$cfg;
+                        foreach ($path as $k) {
+                            $ref = &$ref[$k];
+                        }
+                        $ref = array_values((array) $src);
+                        unset($ref);
+                    }
                 }
             }
         }
@@ -83,12 +94,73 @@ function send_page_headers(): void
     header('Content-Type: text/html; charset=utf-8');
     // 'unsafe-inline' for styles is required by KaTeX/Mermaid output (style attributes).
     // Scripts: same origin only – there is no inline JavaScript anywhere.
-    header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+    header("Content-Security-Policy: default-src 'self'; script-src 'self' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; "
         . "img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self'; "
         . "worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; "
         . "form-action 'self'; frame-ancestors 'none'"
         . (is_https() ? '; upgrade-insecure-requests' : ''));
     header('Cache-Control: no-cache');
+}
+
+/**
+ * Visitor's country (ISO 3166-1 alpha-2, upper case) or null.
+ * Only read from sources the operator explicitly configured – never from arbitrary headers.
+ */
+function country(): ?string
+{
+    static $cc = false;
+    if ($cc !== false) {
+        return $cc;
+    }
+    $geo = config()['geo'];
+    $raw = match ($geo['source'] ?? 'none') {
+        'server_var' => $_SERVER[(string) ($geo['server_var'] ?? 'GEOIP_COUNTRY_CODE')] ?? null,
+        'cloudflare' => $_SERVER['HTTP_CF_IPCOUNTRY'] ?? null,
+        default      => null,
+    };
+    $raw = is_string($raw) ? strtoupper(trim($raw)) : '';
+    return $cc = preg_match('/^[A-Z]{2}$/', $raw) && !in_array($raw, ['XX', 'T1'], true) ? $raw : null;
+}
+
+/** Default UI language for this request: 'de' or 'en'. */
+function ui_lang(): string
+{
+    $cfg = config();
+    $mode = $cfg['default_lang'] ?? 'auto';
+    if ($mode === 'de' || $mode === 'en') {
+        return $mode;
+    }
+    $cc = country();
+    if ($cc !== null) {
+        return in_array($cc, (array) $cfg['german_countries'], true) ? 'de' : 'en';
+    }
+    // No country known: fall back to the browser's preferred language.
+    $al = strtolower((string) ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''));
+    foreach (explode(',', $al) as $part) {
+        $tag = trim(explode(';', $part)[0]);
+        if ($tag === '' || $tag === '*') {
+            continue;
+        }
+        return str_starts_with($tag, 'de') ? 'de' : 'en';
+    }
+    return 'en';
+}
+
+/**
+ * Redirects legacy "/reader.php" style URLs to clean ones ("/reader").
+ * The web server maps the clean URL back to the .php file internally.
+ */
+function canonical_redirect(string $page): void
+{
+    $uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
+    $path = (string) parse_url($uri, PHP_URL_PATH);
+    if (!preg_match('#(^|/)' . preg_quote($page, '#') . '\.php$#', $path)) {
+        return;
+    }
+    $clean = substr($path, 0, -strlen($page . '.php')) . ($page === 'index' ? '' : $page);
+    $query = parse_url($uri, PHP_URL_QUERY);
+    header('Location: ' . ($clean === '' ? '/' : $clean) . ($query ? '?' . $query : ''), true, 301);
+    exit;
 }
 
 /** Public, non-sensitive settings exposed to the front-end. */

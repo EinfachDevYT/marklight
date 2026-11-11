@@ -2,19 +2,19 @@
   "name": "Marklight – Markdown reader, editor & toolbox",
   "short_name": "Marklight",
   "description": "Read, write and transform Markdown privately in your browser. Engineered by EinfachDev.",
-  "start_url": "./reader.php",
+  "start_url": "./reader",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#fbfaf7",
-  "theme_color": "#1d1b22",
+  "background_color": "#0d0b14",
+  "theme_color": "#0d0b14",
   "icons": [
     { "src": "assets/img/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ],
   "file_handlers": [
-    { "action": "./reader.php", "accept": { "text/markdown": [".md", ".markdown", ".mdown", ".mkd"] } }
+    { "action": "./reader", "accept": { "text/markdown": [".md", ".markdown", ".mdown", ".mkd"] } }
   ],
   "shortcuts": [
-    { "name": "Editor", "url": "./editor.php" },
-    { "name": "Tools", "url": "./tools.php" }
+    { "name": "Editor", "url": "./editor" },
+    { "name": "Tools", "url": "./tools" }
   ]
 }

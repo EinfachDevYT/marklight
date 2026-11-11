@@ -16,6 +16,47 @@ return [
     // Send Strict-Transport-Security when the request came in over HTTPS.
     'hsts' => true,
 
+    // Default UI language when the visitor has not chosen one yet: 'auto' (country, then
+    // browser language), 'de' or 'en'. Visitors can always switch; their choice is kept
+    // in their own browser only.
+    'default_lang' => 'auto',
+
+    // Countries (ISO 3166-1 alpha-2) whose visitors get German by default when 'auto'.
+    'german_countries' => ['DE', 'AT', 'CH', 'LI', 'LU'],
+
+    // Country detection (used for the default language). Marklight never calls an external service for this.
+    //  - 'none'       : disabled
+    //  - 'server_var' : the web server sets a variable, e.g. nginx GeoIP2 module
+    //                   (fastcgi_param GEOIP_COUNTRY_CODE $geoip2_country_code;)
+    //  - 'cloudflare' : trust the CF-IPCountry header – ONLY if the site is reachable
+    //                   exclusively through Cloudflare, otherwise it can be spoofed.
+    'geo' => [
+        'source'     => 'none',
+        'server_var' => 'GEOIP_COUNTRY_CODE',
+    ],
+
+    // Legal pages (Impressum / Datenschutz). Required for sites run from Germany.
+    // Fill this in config/config.local.php – never commit personal data.
+    'legal' => [
+        'name'        => '',   // full name or company
+        'street'      => '',
+        'city'        => '',   // postcode + city
+        'country'     => 'Deutschland',
+        'email'       => '',
+        'phone'       => '',   // optional
+        'vat_id'      => '',   // optional (USt-IdNr.)
+        // Optional: link to an existing Impressum instead (e.g. of your main domain).
+        'imprint_url' => '',
+        // Optional: name/address of your hosting provider (shown in the privacy policy).
+        'hoster'      => '',
+        // Does the web server keep access logs for this site? (Marklight's sample configs: no)
+        'access_logs' => false,
+        // Name of the GeoIP database used (shown in the privacy policy if geo is enabled).
+        'geo_db'      => 'IP to Country Lite by DB-IP (db-ip.com), CC BY 4.0',
+        // Date shown as "last updated" on the privacy policy.
+        'privacy_date' => '2026-11-11',
+    ],
+
     // Server-side URL loader used by "Open from URL" in the reader.
     // The browser never talks to third-party hosts directly (CSP connect-src 'self').
     'fetch' => [

@@ -25,7 +25,7 @@
   ML.store = store;
 
   /* ---------- Settings ---------- */
-  const DEFAULTS = { theme: 'auto', lang: null, font: 'sans', size: 17, width: 760, math: true, mermaid: true };
+  const DEFAULTS = { theme: 'dark', lang: null, font: 'sans', size: 17, width: 760, math: true, mermaid: true };
   const settings = Object.assign({}, DEFAULTS, store.get('settings', {}));
   ML.settings = settings;
   const listeners = [];
@@ -52,7 +52,7 @@
     root.style.setProperty('--reader-size', settings.size + 'px');
     root.style.setProperty('--reader-width', settings.width + 'px');
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', { dark: '#111016', sepia: '#f4ecd8' }[resolvedTheme()] || '#fbfaf7');
+    if (meta) meta.setAttribute('content', { dark: '#0d0b14', sepia: '#f4ecd8' }[resolvedTheme()] || '#fbf9ff');
   }
   applySettings(); // runs in <head> → no flash of the wrong theme
   if (window.matchMedia) {
@@ -64,7 +64,10 @@
   /* ---------- i18n ---------- */
   const I18N = window.MarklightI18n || { en: {}, de: {} };
   function detectLang() {
-    if (settings.lang && I18N[settings.lang]) return settings.lang;
+    if (settings.lang && I18N[settings.lang]) return settings.lang; // explicit user choice
+    // Server-side default (visitor's country / Accept-Language), see src/bootstrap.php
+    const srv = document.documentElement.getAttribute('data-default-lang');
+    if (srv && I18N[srv]) return srv;
     const nav = (navigator.languages || [navigator.language || 'en']).map((l) => String(l).slice(0, 2).toLowerCase());
     return nav.find((l) => I18N[l]) || 'en';
   }
@@ -242,7 +245,7 @@
   };
   ML.shareLink = async function (text, page) {
     const data = await ML.encodeShare(text);
-    const url = new URL(page || 'reader.php', location.href);
+    const url = new URL(page || 'reader', location.href);
     url.search = '';
     url.hash = 'md=' + data;
     const link = url.toString();

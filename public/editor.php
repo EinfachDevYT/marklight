@@ -94,10 +94,10 @@ $fmt = [
         <span id="stRead"></span>
         <span id="stPos"></span>
         <span class="saved" id="stSaved" data-i18n="ed.saved">Saved locally</span>
+        <?= legal_links() ?>
         <?= engineered_by() ?>
       </div>
     </div>
   </div>
   <input type="file" id="fileInput" accept=".md,.markdown,.mdown,.mkd,.mkdn,.mdx,.txt,text/markdown,text/plain" hidden>
-</body>
-</html>
+<?php app_end();

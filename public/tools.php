@@ -42,7 +42,7 @@ $tools = [
 <?php foreach ($tools as $id => $icon): ?>
         <a href="#<?= e($id) ?>" data-tool="<?= e($id) ?>"><i data-icon="<?= e($icon) ?>"></i><span data-i18n="tool.<?= e($id) ?>.t"><?= e($id) ?></span></a>
 <?php endforeach; ?>
-        <div class="credit" style="border:0;margin-top:12px"><?= engineered_by() ?></div>
+        <div class="credit credit-flat"><?= engineered_by() ?><?= legal_links() ?></div>
       </nav>
 
       <main class="tools-main" id="main">
@@ -200,5 +200,4 @@ $tools = [
       </main>
     </div>
   </div>
-</body>
-</html>
+<?php app_end();

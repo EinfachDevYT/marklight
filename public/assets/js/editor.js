@@ -270,10 +270,10 @@
         setTimeout(() => { window.print(); layout.dataset.view = prev; }, 50);
         break;
       }
-      case 'share': ML.shareLink(src.value, 'reader.php'); break;
+      case 'share': ML.shareLink(src.value, 'reader'); break;
       case 'reader':
         try { sessionStorage.setItem('marklight:handoff', JSON.stringify({ content: src.value, name: fname })); } catch (e) { /* ignore */ }
-        location.href = 'reader.php';
+        location.href = 'reader';
         break;
       default: break;
     }

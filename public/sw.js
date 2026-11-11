@@ -1,9 +1,9 @@
 /* Marklight service worker – offline support. Engineered by EinfachDev.
    Strategy: pages = network first (fallback cache), static assets = cache first.
    The API (api/*) and anything cross-origin is never cached. */
-const VERSION = 'marklight-v1.0.0';
+const VERSION = 'marklight-v1.1.0';
 const CORE = [
-  './', 'index.php', 'reader.php', 'editor.php', 'tools.php',
+  './', 'reader', 'editor', 'tools', 'impressum', 'datenschutz', 'assets/js/boot.js',
   'assets/css/app.css', 'assets/js/i18n.js', 'assets/js/icons.js', 'assets/js/core.js',
   'assets/js/reader.js', 'assets/js/editor.js', 'assets/js/tools.js', 'assets/img/logo.svg',
   'assets/demo-en.md', 'assets/demo-de.md', 'manifest.webmanifest',
@@ -36,7 +36,7 @@ self.addEventListener('fetch', (event) => {
           if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(url.pathname, copy)); }
           return res;
         })
-        .catch(() => caches.match(url.pathname, { ignoreSearch: true }).then((r) => r || caches.match('reader.php')))
+        .catch(() => caches.match(url.pathname, { ignoreSearch: true }).then((r) => r || caches.match('reader')))
     );
     return;
   }

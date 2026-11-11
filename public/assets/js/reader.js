@@ -389,8 +389,8 @@
       case 'close': closeDoc(); break;
       default:
         if (!doc) { ML.toast(t('reader.nothingOpen'), 'error'); return; }
-        if (name === 'share') ML.shareLink(doc.content, 'reader.php');
-        if (name === 'edit') { store.set('draft', { content: doc.content, name: doc.name, ts: Date.now() }); location.href = 'editor.php'; }
+        if (name === 'share') ML.shareLink(doc.content, 'reader');
+        if (name === 'edit') { store.set('draft', { content: doc.content, name: doc.name, ts: Date.now() }); location.href = 'editor'; }
         if (name === 'dl-md') ML.download(ML.baseName(doc.name) + '.md', doc.content, 'text/markdown;charset=utf-8');
         if (name === 'dl-html') ML.download(ML.baseName(doc.name) + '.html', ML.exportHtml(doc.content, ML.baseName(doc.name)), 'text/html;charset=utf-8');
         if (name === 'copy-html') ML.copy(ML.toHtml(doc.content).html);
